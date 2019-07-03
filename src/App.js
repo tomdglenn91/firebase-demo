@@ -1,23 +1,40 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
 
+import firebase from 'firebase'
+import app from './firebase'
+
+import Database from './Database'
+import Function from './Function'
+
 function App() {
+  let [user, setUser] = useState(null)
+
+  app.auth().onAuthStateChanged(user => {
+    setUser(user)
+  })
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          { user ? `Hello ${user.displayName}` : 'Not signed in :('}
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <button onClick={() => app.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())}>
+          Sign in!
+        </button>
+
+        <button onClick={() => app.auth().signOut()}>
+          Sign out!
+        </button>
+
+        <div style={{marginTop: '24px'}}>
+          <Database />
+        </div>
+
+        <div style={{marginTop: '24px'}}>
+          <Function />
+        </div>
       </header>
     </div>
   );
